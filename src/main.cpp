@@ -4,6 +4,7 @@ using namespace bj;
 
 struct SplashScene : public Scene
 {
+	// ooga booga me big man
 	void onStart() override
 	{
 		UI::loadFont("res/ProggyTiny.ttf", .05);
