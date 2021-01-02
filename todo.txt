@@ -26,10 +26,7 @@ ________
 - boss music
 - main theme
 - sfx
-	- watering
-	- chainsaw(short)
-	- chainsaw(long)
-	- footsteps
+	
 	- hurt
 	- monster sfx
-	- money
+	
