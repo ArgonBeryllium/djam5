@@ -13,10 +13,10 @@ int BJ_MULP_MAIN()
 	ip.scenes = new Scene*[2]{new SplashScene(), new Level(6, 3, {})};
 
 	Game::init(ip);
+	shitrndr::WindowProps::setPixScale(3);
 	UI::loadFont("res/ProggyTiny.ttf", .05);
 	UI::loadFont("res/Ludum-Dairy-0.2.0.ttf", .07);
 	UI::loadFont("res/KingthingsExtortion-YMAa.ttf", .075);
-	shitrndr::WindowProps::setPixScale(3);
 	SDL_SetRenderDrawBlendMode(shitrndr::ren, SDL_BLENDMODE_BLEND);
 	Game::start();
 }

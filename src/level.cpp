@@ -4,13 +4,17 @@
 template <typename T>
 static T lerp(const T& a, const T& b, const float& f) { return a + (b-a)*f; }
 
+using namespace bj;
 Level* Level::instance;
-Level::Level (uint8_t w, uint8_t h, std::vector<std::pair<uint8_t, uint8_t>> seeds_)
+Level::Level (uint8_t w_, uint8_t h_, std::vector<std::pair<uint8_t, uint8_t>> seeds_) : w(w_), h(h_)
 {
-	using namespace bj;
 	instance = this;
 	for(auto p : seeds_)
 		seeds[p.first] = p.second;
+}
+
+void Level::onStart()
+{
 	instantiate()->addComponent(new Player(getObj(0)));
 	for(float y = 0; y != h; y++)
 		for(float x = 0; x != w; x++)
@@ -22,6 +26,8 @@ Level::Level (uint8_t w, uint8_t h, std::vector<std::pair<uint8_t, uint8_t>> see
 	GameObj* o = instantiate();
 	o->transform.pos = {-3, -3};
 	o->addComponent(new Well(o));
+
+	cam.scale = .2;
 }
 
 void Level::onRenderFG(float d, float t)
@@ -33,4 +39,3 @@ void Level::onRenderFG(float d, float t)
 			Plant::kill(p.second->getComponent<Plant>());
 	}
 }
-
