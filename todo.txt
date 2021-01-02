@@ -1,0 +1,35 @@
+arbe
+________
+
+- check & probably fix audio system
+- implement basic crop mechanics
+	- sowing
+	- growth
+	- watering
+- come up with and implement plant types
+- the different levels
+	- 0; tutorial
+	- 1; intro
+	- 2
+	- 3
+	- 4; boss fight
+- main menu
+
+CUTOFF LINE ---
+settings menu
+physical radio for song switching
+
+
+blungi
+________
+- the 4 radio songs
+- boss music
+- main theme
+- sfx
+	- watering
+	- chainsaw(short)
+	- chainsaw(long)
+	- footsteps
+	- hurt
+	- monster sfx
+	- money
