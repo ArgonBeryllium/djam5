@@ -5,8 +5,10 @@ using namespace bj;
 Player* Player::instance;
 void Player::onStart()
 {
+	if(this==instance) return;
 	parentObj->addComponent(new BasicRen(parentObj));
 	instance = this;
+	std::cout << "nyuu p\n";
 }
 void Player::onEvent(const ecs::Event &e)
 {
@@ -45,10 +47,14 @@ void Player::onEvent(const ecs::Event &e)
 					if(dynamic_cast<Plant*>(sel))
 					{
 						if(!((Plant*)sel)->getAction().compare("harvest"))
-							harvest((Plant*)sel);
-						else if(((Plant*)sel)->hydration<1 && instance->water > 0)
 						{
-							float amt = e.type==ecs::Event::keyD?.1:.2;
+							harvest((Plant*)sel);
+							return;
+						}
+
+						float amt = e.type==ecs::Event::keyD?.1:.2;
+						if(((Plant*)sel)->hydration<1 && instance->water >= amt)
+						{
 							water-=amt;
 							((Plant*)sel)->water(amt);
 						}
@@ -83,6 +89,7 @@ Interactable* Player::check()
 void Player::harvest(Plant *plant)
 {
 	instance->money += plant->getWorth();
+	instance->power -= plant->getWorth()/10.;
 	plant->parentObj->addComponent(new Ground(plant->parentObj));
 	plant->parentObj->removeComponent(plant);
 }

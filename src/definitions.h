@@ -10,7 +10,7 @@ struct Player : public bj::ecs::Com
 	float water = 1, power = 1;
 	int money = 0;
 
-	Player(bj::GameObj* po) : bj::ecs::Com(bj::BehSys::getInstance(), po) {}
+	Player(bj::GameObj* po) : bj::ecs::Com(bj::BehSys::getInstance(), po) { onStart(); }
 
 	Interactable* check();
 	static void harvest(Plant* plant);
@@ -23,7 +23,7 @@ struct Interactable : public bj::ecs::Com
 	virtual std::string getAction();
 	virtual std::string getName();
 
-	Interactable(bj::GameObj* po) : bj::ecs::Com(bj::BehSys::getInstance(), po) {}
+	Interactable(bj::GameObj* po) : bj::ecs::Com(bj::BehSys::getInstance(), po) {onStart();}
 
 	void onStart() override;
 	void onEvent(const bj::ecs::Event& e) override;
@@ -57,4 +57,10 @@ struct Ground : public Interactable
 	Ground(bj::GameObj* po) : Interactable(po) {}
 	std::string getAction() override;
 	std::string getName() override;
+};
+
+struct Assets
+{
+	static Mix_Chunk* sfx_money;
+	static void init();
 };
