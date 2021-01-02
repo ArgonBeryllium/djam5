@@ -2,10 +2,7 @@ arbe
 ________
 
 - chainsaw power system
-- level system
-	time
-	minimum sum
-- hp & restarting days
+- hp
 - come up with and implement plant types
 - the different levels
 	- 0; tutorial
@@ -17,7 +14,7 @@ ________
 - main menu
 
 art:
-	mc (ide, walk)
+	mc (idle, walk)
 	chainsaw
 	radio
 	ground
