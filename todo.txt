@@ -1,10 +1,7 @@
 arbe
 ________
 
-- implement basic crop mechanics
-	- sowing
-	- growth
-	- watering
+- chainsaw power system
 - come up with and implement plant types
 - the different levels
 	- 0; tutorial
