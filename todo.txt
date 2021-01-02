@@ -12,6 +12,7 @@ ________
 	- 2
 	- 3
 	- 4; boss fight
+		(phases tied to the remaining roots)
 - main menu
 
 CUTOFF LINE ---
