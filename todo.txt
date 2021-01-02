@@ -2,6 +2,10 @@ arbe
 ________
 
 - chainsaw power system
+- level system
+	time
+	minimum sum
+- hp & restarting days
 - come up with and implement plant types
 - the different levels
 	- 0; tutorial
@@ -12,7 +16,21 @@ ________
 		(phases tied to the remaining roots)
 - main menu
 
+art:
+	mc (ide, walk)
+	chainsaw
+	radio
+	ground
+	plants (sprout, ripe, dead)
+	water meter
+	power meter
+	monsters
+	boss
+		main body (breaking through, normal, shooting, dead)
+		roots
+
 CUTOFF LINE ---
+title art
 settings menu
 physical radio for song switching
 
