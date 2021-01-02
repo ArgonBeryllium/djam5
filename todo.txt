@@ -1,7 +1,6 @@
 arbe
 ________
 
-- check & probably fix audio system
 - implement basic crop mechanics
 	- sowing
 	- growth
@@ -13,6 +12,7 @@ ________
 	- 2
 	- 3
 	- 4; boss fight
+		(phases tied to the remaining roots)
 - main menu
 
 CUTOFF LINE ---
