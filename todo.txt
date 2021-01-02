@@ -1,7 +1,6 @@
 arbe
 ________
 
-- check & probably fix audio system
 - implement basic crop mechanics
 	- sowing
 	- growth
