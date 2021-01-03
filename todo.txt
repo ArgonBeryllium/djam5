@@ -1,12 +1,16 @@
 arbe
 ________
 
-- chainsaw power system
-- level system
-	time
-	minimum sum
-- hp & restarting days
 - come up with and implement plant types
+	- tentatoes: potatoes, but with tentacles.
+		immobile
+		melee tentacle attacks
+	- sparrots: spider carrots
+		mobile
+		jump on you
+	- scorn: corn, but shoots
+		immobile
+		shoots popcorn
 - the different levels
 	- 0; tutorial
 	- 1; intro
@@ -17,7 +21,7 @@ ________
 - main menu
 
 art:
-	mc (ide, walk)
+	mc (idle, walk)
 	chainsaw
 	radio
 	ground
@@ -25,6 +29,10 @@ art:
 	water meter
 	power meter
 	monsters
+		tentatoes: idle, attack
+		sparrots: walk, jump
+		scorn: idle, heat up, explode
+			popcorn
 	boss
 		main body (breaking through, normal, shooting, dead)
 		roots
@@ -41,7 +49,8 @@ ________
 - boss music
 - main theme
 - sfx
-	
 	- hurt
 	- monster sfx
-	
+		tentatoes: sprout, swing, slap
+		sparrots: bite
+		scorn: heat up, pop

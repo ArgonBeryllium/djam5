@@ -7,13 +7,15 @@ struct Player : public bj::ecs::Com
 {
 	static Player* instance;
 	bj::v2f dir;
-	float water = 1, power = 1;
+	float water = 1, power = 1, life = 1;
 	int money = 0;
+	bool hasSaw = 1;
 
-	Player(bj::GameObj* po) : bj::ecs::Com(bj::BehSys::getInstance(), po) {}
+	Player(bj::GameObj* po) : bj::ecs::Com(bj::BehSys::getInstance(), po) { onStart(); }
 
 	Interactable* check();
 	static void harvest(Plant* plant);
+	static void die(const std::string& caption);
 	void onStart() override;
 	void onEvent(const bj::ecs::Event& e) override;
 };
@@ -23,7 +25,7 @@ struct Interactable : public bj::ecs::Com
 	virtual std::string getAction();
 	virtual std::string getName();
 
-	Interactable(bj::GameObj* po) : bj::ecs::Com(bj::BehSys::getInstance(), po) {}
+	Interactable(bj::GameObj* po) : bj::ecs::Com(bj::BehSys::getInstance(), po) {onStart();}
 
 	void onStart() override;
 	void onEvent(const bj::ecs::Event& e) override;
@@ -39,6 +41,7 @@ struct Plant : public Interactable
 	std::string getAction() override;
 	std::string getName() override;
 	virtual int getWorth();
+	virtual float getPower();
 	void water(const float& amt);
 	static void kill(Plant* plant);
 
@@ -52,9 +55,22 @@ struct Well : public Interactable
 	std::string getAction() override;
 	std::string getName() override;
 };
+struct Charger : public Interactable
+{
+	Charger(bj::GameObj* po) : Interactable(po) {}
+	std::string getAction() override;
+	std::string getName() override;
+	void onEvent(const bj::ecs::Event& e) override;
+};
 struct Ground : public Interactable
 {
 	Ground(bj::GameObj* po) : Interactable(po) {}
 	std::string getAction() override;
 	std::string getName() override;
+};
+
+struct Assets
+{
+	static Mix_Chunk* sfx_money, *sfx_splash;
+	static void init();
 };

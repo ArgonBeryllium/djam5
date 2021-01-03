@@ -13,6 +13,7 @@ std::string Interactable::getName() { return "interactable"; }
 std::string Plant::getAction() { return ripeness<HARVEST_T?"water":"harvest"; }
 std::string Plant::getName() { return "generic plant"; }
 int Plant::getWorth() { return 10; }
+float Plant::getPower() { return .05; }
 void Plant::onStart()
 {
 	Interactable::onStart();
@@ -49,6 +50,14 @@ void Plant::kill(Plant* plant)
 
 std::string Well::getName() { return "well"; }
 std::string Well::getAction() { return "get water"; }
+
+std::string Charger::getName() { return "charger"; }
+std::string Charger::getAction() { return Player::instance->hasSaw?"leave saw to charge":"take saw"; }
+void Charger::onEvent(const bj::ecs::Event &e)
+{
+	if(!Player::instance->hasSaw && Player::instance->power<1)
+		Player::instance->power += e.delta*.1;
+}
 
 std::string Ground::getName() { return "ground"; }
 std::string Ground::getAction() { return "plant"; }
