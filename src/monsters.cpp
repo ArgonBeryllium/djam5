@@ -12,21 +12,21 @@ int Sparrot::getWorth() { return 10; }
 float Sparrot::getPower() { return .05; }
 void Sparrot::onStart()
 {
-	parentObj->removeComponent(parentObj->getComponent<BasicRen>());
+	sr = new SpriteRen(parentObj, Assets::tex_sparrot);
+	parentObj->addComponent(sr);
 }
 void Sparrot::onEvent(const ecs::Event& e)
 {
 	Plant::onEvent(e);
 	if(e.type!=ecs::Event::frame) return;
-	parentObj->transform.scl = v2f{1,1}*(.6+.4*hydration);
-	shitrndr::Copy(Assets::tex_sparrot, parentObj->transform.getScreenRect());
+	parentObj->getComponent<SpriteRen>()->offset.scl = v2f{1,1}*(.6+.4*hydration);
 }
 Monster* Sparrot::getMut(GameObj* obj) { return new SparrotMon(obj); }
 
 std::string SparrotMon::getName() { return "mutant sparrot"; }
 void SparrotMon::onStart()
 {
-	life = .3;
+	life = .2;
 	parentObj->transform.scl *= .8;
 }
 void SparrotMon::takeDamage(float amt)
@@ -51,7 +51,7 @@ void SparrotMon::onEvent(const bj::ecs::Event &e)
 			cd = 1;
 		}
 		SDL_Rect r = parentObj->transform.getScreenRect();
-	shitrndr::CopyEx(Assets::tex_sparrot_walk, {540, 0, 540, 540}, r, std::atan2(dir.y, dir.x)*180/M_PI, {r.w/2, r.h/2}, SDL_FLIP_NONE);
+		shitrndr::CopyEx(Assets::tex_sparrot_walk, {540, 0, 540, 540}, r, std::atan2(dir.y, dir.x)*180/M_PI, {r.w/2, r.h/2}, SDL_FLIP_NONE);
 		return;
 	}
 	else dir = lerp(dir, (Player::instance->parentObj->transform.pos - parentObj->transform.pos).normalised(), e.delta);
@@ -73,21 +73,22 @@ int Scorn::getWorth() { return 15; }
 float Scorn::getPower() { return .08; }
 void Scorn::onStart()
 {
-	parentObj->removeComponent(parentObj->getComponent<BasicRen>());
+	sr = new SpriteRen(parentObj, Assets::tex_scorn);
+	sr->sourceRect = new SDL_Rect{0,0,540,540};
+	parentObj->addComponent(sr);
 }
 void Scorn::onEvent(const ecs::Event& e)
 {
 	Plant::onEvent(e);
 	if(e.type!=ecs::Event::frame) return;
-	parentObj->transform.scl = v2f{1,1}*(.6+.4*hydration);
-	shitrndr::Copy(Assets::tex_scorn, {0,0,540,540}, parentObj->transform.getScreenRect());
+	sr->offset.scl = v2f{1,1}*(.6+.4*hydration);
 }
 Monster* Scorn::getMut(bj::GameObj *obj) { return new ScornMon(obj); }
 
 std::string ScornMon::getName() { return "mutant scorn"; }
 void ScornMon::onStart()
 {
-	life = .5;
+	life = .4;
 	parentObj->transform.scl *= 1.5;
 }
 void ScornMon::onEvent(const bj::ecs::Event &e)

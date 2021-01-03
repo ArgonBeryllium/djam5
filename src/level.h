@@ -14,6 +14,7 @@ struct Level : public bj::Scene
 	Level(uint8_t w_, uint8_t h_, std::vector<std::pair<uint8_t, uint8_t>> seeds_, float time_, int minSum, bool lc = 0);
 
 	void onStart() override;
+	void onLoad() override;
 	void onRenderFG(float d, float t) override;
 };
 
