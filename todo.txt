@@ -1,14 +1,6 @@
 arbe
 ________
 
-implement plants
-	- tentatoes: potatoes, but with tentacles.
-		immobile
-		melee tentacle attacks
-	- scorn: corn, but shoots
-		immobile
-		shoots popcorn
-
 - the different levels
 	- 0; tutorial
 	- 1; intro
@@ -27,10 +19,6 @@ art:
 	bg
 	water meter
 	power meter
-	monsters
-		tentatoes: idle, attack
-		scorn: idle, heat up, explode
-			popcorn
 	boss
 		main body (breaking through, normal, shooting, dead)
 		roots
@@ -52,6 +40,5 @@ ________
 - sfx
 	- hurt
 	- monster sfx
-		tentatoes: sprout, swing, slap
 		sparrots: bite
 		scorn: heat up, pop

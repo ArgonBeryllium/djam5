@@ -27,3 +27,32 @@ struct SparrotMon : public Monster
 	int getWorth() override;
 	void takeDamage(float amt) override;
 };
+
+struct Scorn : public Plant
+{
+	Scorn(bj::GameObj* po) : Plant(po)
+	{
+		deh_rate = .03;
+		rip_rate = .015;
+	}
+	float getPower() override;
+	Monster* getMut(bj::GameObj* obj) override;
+	std::string getName() override;
+	int getWorth() override;
+
+	void onStart() override;
+	void onEvent(const bj::ecs::Event& e) override;
+};
+struct ScornMon : public Monster
+{
+	float cd = 1.5;
+	std::vector<bj::GameObj*> pops;
+	ScornMon(bj::GameObj* po) : Monster(po) {}
+	void onStart() override;
+	void onEvent(const bj::ecs::Event& e) override;
+	std::string getName() override;
+	int getWorth() override;
+	void takeDamage(float amt) override;
+};
+
+

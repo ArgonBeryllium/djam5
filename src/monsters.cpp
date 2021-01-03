@@ -65,3 +65,68 @@ void SparrotMon::onEvent(const bj::ecs::Event &e)
 	parentObj->transform.pos += dir*e.delta;
 }
 int SparrotMon::getWorth() { return 20; }
+
+
+
+std::string Scorn::getName() { return "scorn"; }
+int Scorn::getWorth() { return 15; }
+float Scorn::getPower() { return .08; }
+void Scorn::onStart()
+{
+	parentObj->removeComponent(parentObj->getComponent<BasicRen>());
+}
+void Scorn::onEvent(const ecs::Event& e)
+{
+	Plant::onEvent(e);
+	if(e.type!=ecs::Event::frame) return;
+	parentObj->transform.scl = v2f{1,1}*(.6+.4*hydration);
+	shitrndr::Copy(Assets::tex_scorn, {0,0,540,540}, parentObj->transform.getScreenRect());
+}
+Monster* Scorn::getMut(bj::GameObj *obj) { return new ScornMon(obj); }
+
+std::string ScornMon::getName() { return "mutant scorn"; }
+void ScornMon::onStart()
+{
+	life = .5;
+	parentObj->transform.scl *= 1.5;
+}
+void ScornMon::onEvent(const bj::ecs::Event &e)
+{
+	if(e.type!=ecs::Event::frame) return;
+
+	cd -= e.delta;
+	shitrndr::Copy(Assets::tex_scorn, {int(cd*6)%9*540,0,540,540}, parentObj->transform.getScreenRect());
+	if(cd<=0)
+	{
+		cd = 1.5;
+		for(GameObj* pop : pops) parentObj->parentScene->destroy(pop->getID());
+		pops.clear();
+		int c = std::rand()%3 + 4;
+		for(int i = 0; i != c; i++)
+		{
+			GameObj* pop = parentObj->parentScene->instantiate();
+			pop->addComponent(new SpriteRen(pop, Assets::tex_pop_scorn[std::rand()%4]));
+			float a = M_PI*2*i/c;
+			pop->transform.pos = parentObj->transform.pos + v2f{std::cos(a), std::sin(a)};
+			pops.push_back(pop);
+		}
+	}
+	for(auto i = pops.begin(); i != pops.end(); i++)
+	{
+		GameObj* pop = *i.base();
+		pop->transform.pos += (pop->transform.pos - parentObj->transform.pos).normalised()*e.delta*3;
+		if((pop->transform.pos-Player::instance->parentObj->transform.pos).getLengthSquare()<1.1)
+		{
+			parentObj->parentScene->destroy(pop->getID());
+			Player::hurt(.2);
+			i = pops.erase(i);
+		}
+	}
+}
+int ScornMon::getWorth() { return 30; }
+void ScornMon::takeDamage(float amt)
+{
+	life -= amt;
+	if(life<=0)
+		for(GameObj* pop : pops) parentObj->parentScene->destroy(pop->getID());
+}

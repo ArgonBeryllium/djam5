@@ -21,7 +21,7 @@ int BJ_MULP_MAIN()
 	UI::loadFont("res/Ludum-Dairy-0.2.0.ttf", .07);
 	UI::loadFont("res/KingthingsExtortion-YMAa.ttf", .075);
 	SDL_SetRenderDrawBlendMode(shitrndr::ren, SDL_BLENDMODE_BLEND);
-	SceneManager::getScene(1)->instantiate()->addComponent(new SparrotMon(SceneManager::getScene(1)->getObj(0)));
+	SceneManager::getScene(1)->instantiate()->addComponent(new ScornMon(SceneManager::getScene(1)->getObj(0)));
 	SceneManager::getScene(1)->getObj(0)->transform.pos = {-3, 0};
 
 	Game::start();

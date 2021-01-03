@@ -83,7 +83,7 @@ struct Ground : public Interactable
 
 struct Assets
 {
-	static Mix_Chunk* sfx_money, *sfx_splash,  *sfx_plant, *sfx_harvest, **sfx_water, *sfx_refill_water, *sfx_charge, *sfx_attack;
-	static SDL_Texture* tex_tentato, *tex_sparrot, *tex_sparrot_walk;
+	static Mix_Chunk* sfx_money, *sfx_splash,  *sfx_plant, *sfx_harvest, **sfx_water, *sfx_refill_water, *sfx_charge, *sfx_attack, *sfx_no_power;
+	static SDL_Texture* tex_tentato, *tex_sparrot, *tex_sparrot_walk, *tex_scorn, **tex_pop_scorn;
 	static void init();
 };

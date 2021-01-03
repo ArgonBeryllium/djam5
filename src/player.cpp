@@ -49,11 +49,16 @@ void Player::onEvent(const ecs::Event &e)
 				{
 					if(dynamic_cast<Plant*>(sel))
 					{
-						if(!((Plant*)sel)->getAction().compare("harvest") && hasSaw && power >= ((Plant*)sel)->getPower() && cd <= 0)
+						if(!((Plant*)sel)->getAction().compare("harvest") && hasSaw && cd <= 0)
 						{
-							cd = .5;
-							harvest((Plant*)sel);
-							return;
+							if(power >= ((Plant*)sel)->getPower())
+							{
+								cd = .5;
+								harvest((Plant*)sel);
+								return;
+							}
+							else
+								Audio::playSound(Assets::sfx_no_power);
 						}
 
 						float amt = e.type==ecs::Event::keyD?.1:.2;
@@ -107,6 +112,8 @@ void Player::onEvent(const ecs::Event &e)
 								parentObj->parentScene->destroy(sel->parentObj->getID());
 							}
 						}
+						else if(hasSaw && cd <=0)
+							Audio::playSound(Assets::sfx_no_power);
 					}
 				}
 			}
