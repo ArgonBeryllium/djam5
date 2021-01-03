@@ -10,6 +10,10 @@ void Interactable::onEvent(const bj::ecs::Event& e) {}
 std::string Interactable::getAction() { return "action"; }
 std::string Interactable::getName() { return "interactable"; }
 
+
+std::string Monster::getAction() { return "attack"; }
+std::string Monster::getName() { return "generic monster"; }
+
 std::string Plant::getAction() { return ripeness<HARVEST_T?"water":"harvest"; }
 std::string Plant::getName() { return "generic plant"; }
 int Plant::getWorth() { return 10; }
@@ -25,16 +29,17 @@ void Plant::onEvent(const bj::ecs::Event& e)
 	{
 		constexpr float r = 5;
 		vec2<uint32_t> sv = Camera::getActiveCam()->getScreenPoint(parentObj->transform.pos);
+
 		SDL_SetRenderDrawColor(shitrndr::ren, 15, 15, 15, 255);
 		shitrndr::FillCircle(sv.x+r, sv.y, r);
 		shitrndr::FillCircle(sv.x+3.1*r, sv.y, r);
+
 		SDL_SetRenderDrawColor(shitrndr::ren, 215, 15, 15, 255);
 		shitrndr::FillCircle(sv.x+r, sv.y, int(hydration*r));
 		SDL_SetRenderDrawColor(shitrndr::ren, 15, 215, 15, 255);
 		shitrndr::FillCircle(sv.x+3.1*r, sv.y, int(ripeness*r));
 	}
 	hydration -= deh_rate*e.delta;
-	parentObj->transform.scl = v2f{1,1}*(.6+.4*hydration);
 	if(hydration>=.7) ripeness += rip_rate*e.delta;
 }
 void Plant::water(const float& amt)
@@ -47,6 +52,7 @@ void Plant::kill(Plant* plant)
 	o->removeComponent(plant);
 	o->addComponent(new Ground(o));
 }
+
 
 std::string Well::getName() { return "well"; }
 std::string Well::getAction() { return "get water"; }

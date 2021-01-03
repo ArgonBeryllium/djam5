@@ -6,7 +6,7 @@ struct Level : public bj::Scene
 	static Level* instance;
 
 	std::map<uint8_t, uint8_t> seeds;
-	uint8_t selType, w, h;
+	uint8_t selType, w, h, selSeed=0;
 	float time;
 	int minSum;
 	bool lastChance;

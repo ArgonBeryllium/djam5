@@ -1,5 +1,6 @@
 #include "definitions.h"
 #include "level.h"
+#include "monsters.h"
 #include <bj/common.h>
 using namespace bj;
 
@@ -18,7 +19,7 @@ void Player::onEvent(const ecs::Event &e)
 		{
 			constexpr float speed = 3;
 			
-			if(life<=0) die("getting wounded is usually not very healthy.");
+			cd -= e.delta;
 
 			v2f iv = common::inVec();
 			parentObj->transform.pos += iv*e.delta*speed;
@@ -48,32 +49,64 @@ void Player::onEvent(const ecs::Event &e)
 				{
 					if(dynamic_cast<Plant*>(sel))
 					{
-						if(!((Plant*)sel)->getAction().compare("harvest") && hasSaw && power >= ((Plant*)sel)->getPower())
+						if(!((Plant*)sel)->getAction().compare("harvest") && hasSaw && power >= ((Plant*)sel)->getPower() && cd <= 0)
 						{
+							cd = .5;
 							harvest((Plant*)sel);
 							return;
 						}
 
 						float amt = e.type==ecs::Event::keyD?.1:.2;
-						if(((Plant*)sel)->hydration<1 && instance->water >= amt)
+						if(((Plant*)sel)->hydration<1 && instance->water >= amt-.01)
 						{
+							Audio::playSound(Assets::sfx_water[std::rand()%2]);
 							water-=amt;
 							((Plant*)sel)->water(amt);
 						}
 					}
 					else if(dynamic_cast<Well*>(sel))
 					{
-						if(water<=.9)
+						if(water<=.91)
+						{
+							Audio::playSound(Assets::sfx_refill_water);
 							water+=.1;
+						}
 					}
 					else if(dynamic_cast<Charger*>(sel))
 					{
+						Audio::playSound(Assets::sfx_charge);
 						hasSaw = !hasSaw;
 					}
 					else if(dynamic_cast<Ground*>(sel))
 					{
-						sel->parentObj->addComponent(new Plant(sel->parentObj));
-						sel->parentObj->removeComponent(sel);
+						if( Level::instance->seeds[Level::instance->selSeed]>0)
+						{
+							Audio::playSound(Assets::sfx_plant);
+							Level::instance->seeds[Level::instance->selSeed]--;
+							Plant* p;
+							switch(Level::instance->selSeed)
+							{
+								case 0: p = new Sparrot(sel->parentObj); break;
+							}
+							sel->parentObj->addComponent(p);
+							sel->parentObj->removeComponent(sel);
+						}
+					}
+					else if(dynamic_cast<Monster*>(sel))
+					{
+						float amt = e.type==ecs::Event::keyD?.1:.2;
+						if(hasSaw && power >= amt && cd <= 0)
+						{
+							cd = amt*5;
+							power -= amt;
+							Audio::playSound(e.type==ecs::Event::keyD?Assets::sfx_harvest:Assets::sfx_attack);
+							((Monster*)sel)->takeDamage(amt);
+							if(((Monster*)sel)->life<=0)
+							{
+								money += ((Monster*)sel)->getWorth();
+								parentObj->parentScene->destroy(sel->parentObj->getID());
+							}
+						}
 					}
 				}
 			}
@@ -98,6 +131,13 @@ void Player::harvest(Plant *plant)
 	instance->power -= plant->getPower();
 	plant->parentObj->addComponent(new Ground(plant->parentObj));
 	plant->parentObj->removeComponent(plant);
+	Audio::playSound(Assets::sfx_harvest);
+}
+void Player::hurt(float dmg)
+{
+	instance->life -= dmg;
+	if(instance->life<=0) die("getting wounded is usually not very healthy.");
+	common::shakeCam(5,.25, Camera::getActiveCam(), 0);
 }
 void Player::die(const std::string &caption)
 {

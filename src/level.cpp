@@ -1,5 +1,6 @@
 #include "level.h"
 #include "definitions.h"
+#include <bj/common.h>
 
 template <typename T>
 static T lerp(const T& a, const T& b, const float& f) { return a + (b-a)*f; }
@@ -39,7 +40,8 @@ void Level::onRenderFG(float d, float t)
 {
 	time -= d;
 	UI::renderStaticText(1, 0, ("level " + std::to_string(ResultScene::level)), {UI::RIGHT});
-	UI::renderText(1, .1, ("time left: " + std::to_string(time)).c_str(), {UI::RIGHT});
+	UI::renderText(1, .05, ("time left: " + std::to_string(time)).c_str(), {UI::RIGHT});
+	UI::renderText(1, .1, ("seed type: " + std::to_string(selSeed)).c_str(), {UI::RIGHT});
 	if(time < 10)
 	{
 		SDL_SetRenderDrawColor(shitrndr::ren, 0,0,0,255-(255*time/10));
@@ -52,8 +54,20 @@ void Level::onRenderFG(float d, float t)
 	cam.pos = lerp(cam.pos, Player::instance->parentObj->transform.pos, d*3);
 	for(auto p : getObjs())
 	{
-		if(p.second->getComponent<Plant>() && p.second->getComponent<Plant>()->hydration <= 0)
-			Plant::kill(p.second->getComponent<Plant>());
+		if(p.second->getComponent<Plant>())
+		{
+			Plant* plant = p.second->getComponent<Plant>();
+			if(plant->hydration <= 0)
+				Plant::kill(plant);
+			else if(plant->ripeness>Plant::HARVEST_T/2)
+				if(common::frand()<plant->ripeness*plant->ripeness/3600)
+				{
+					GameObj* m = p.second->parentScene->instantiate();
+					m->transform.pos = p.second->transform.pos;
+					m->addComponent(plant->getMut(m));
+					Plant::kill(plant);
+				}
+		}
 	}
 }
 
