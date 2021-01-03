@@ -11,6 +11,28 @@ std::string Interactable::getAction() { return "action"; }
 std::string Interactable::getName() { return "interactable"; }
 
 
+std::string Radio::getAction() { return "change station"; }
+std::string Radio::getName() { return "radio"; }
+
+std::vector<Mix_Chunk*> Radio::songs;
+uint8_t Radio::cp;
+void Radio::changeStation()
+{
+	Audio::playSound(Assets::sfx_static);
+	Mix_FadeOutChannel(Audio::channels[songs[cp]], 1000);
+	cp++;
+	cp%=songs.size();
+	Audio::playSound(songs[cp]);
+	Mix_FadeInChannel(Audio::channels[songs[cp]], songs[cp], 0, 1000);
+}
+void Radio::onEvent(const bj::ecs::Event& e)
+{
+	if(e.type!=ecs::Event::frame) return;
+	if(!Mix_Playing(Audio::channels[songs[cp]]))
+		changeStation();
+}
+
+
 std::string Monster::getAction() { return "attack"; }
 std::string Monster::getName() { return "generic monster"; }
 

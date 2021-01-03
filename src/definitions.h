@@ -3,8 +3,8 @@
 
 struct Assets
 {
-	static Mix_Chunk* sfx_money, *sfx_splash,  *sfx_plant, *sfx_harvest, **sfx_water, *sfx_refill_water, *sfx_charge, *sfx_attack, *sfx_no_power;
-	static SDL_Texture* tex_tentato, *tex_sparrot, *tex_sparrot_walk, *tex_scorn, **tex_pop_scorn, *tex_mc_down, *tex_mc_right, *tex_mc_up, *tex_mc_left, *tex_saw, *tex_power_meter, *tex_power_meter_fill, **tex_water_can, *tex_water_meter, *tex_water_meter_fill, *tex_ground, *tex_well, *tex_charger, **tex_rubbish;
+	static Mix_Chunk* sfx_money, *sfx_splash,  *sfx_plant, *sfx_harvest, **sfx_water, *sfx_refill_water, *sfx_charge, *sfx_attack, *sfx_no_power, *sfx_hurt, *sfx_pop, *sfx_scorn_boom, *sfx_sparrot_bite, **sfx_steps, *sfx_static;
+	static SDL_Texture* tex_tentato, *tex_sparrot, *tex_sparrot_walk, *tex_scorn, **tex_pop_scorn, *tex_mc_down, *tex_mc_right, *tex_mc_up, *tex_mc_left, *tex_saw, *tex_power_meter, *tex_power_meter_fill, **tex_water_can, *tex_water_meter, *tex_water_meter_fill, *tex_ground, *tex_well, *tex_charger, **tex_rubbish, *tex_radio;
 	static void init();
 };
 
@@ -38,6 +38,24 @@ struct Interactable : public bj::ecs::Com
 
 	void onStart() override;
 	void onEvent(const bj::ecs::Event& e) override;
+};
+struct Radio : public Interactable
+{
+	static std::vector<Mix_Chunk*> songs;
+	static uint8_t cp;
+
+	Radio(bj::GameObj* obj) : Interactable(obj)
+	{
+		parentObj->transform.pos = {-3, 0};
+		parentObj->addComponent(new bj::SpriteRen(parentObj, Assets::tex_radio));
+		if(songs.empty()) songs = {bj::fileIO::loadSound("res/music/radio song 1.wav"), bj::fileIO::loadSound("res/music/radio song 2 tha bloongi boo.wav"), bj::fileIO::loadSound("res/music/radio song 3 jazzuga's revange.wav")};
+		if(!cp) cp = -1;
+		//bj::Audio::playSound(songs[cp]);
+	}
+	static void changeStation();
+	void onEvent(const bj::ecs::Event& e) override;
+	std::string getAction() override;
+	std::string getName() override;
 };
 
 struct Monster : public Interactable

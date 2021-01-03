@@ -9,17 +9,10 @@ ________
 		(phases tied to the remaining roots)
 
 - main menu
-- implement all sfx
-- add screenshake
-- radio
-
-- fix audio bugs (e.g. charging & finish sounds not playing)
 
 art:
-	radio
-	bg
 	concludion screen
-	creadits
+	credits
 	boss
 		main body (breaking through, normal, shooting, dead)
 		roots

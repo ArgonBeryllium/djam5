@@ -11,9 +11,10 @@ int BJ_MULP_MAIN()
 {
 	initParams ip;
 	ip.nscenes = 4;
-	ip.scenes = new Scene*[4]{new SplashScene(), new Level(6, 3, {{0, 5}, {1, 2}}, 60, 10, 0), new ResultScene(), new DeathScene()};
+	ip.scenes = new Scene*[4]{new SplashScene(), new Level(6, 3, {{0, 5}, {1, 2}}, 200, 10, 0), new ResultScene(), new DeathScene()};
 
 	Game::init(ip);
+	Mix_AllocateChannels(32);
 
 	shitrndr::WindowProps::setPixScale(3);
 	Assets::init();

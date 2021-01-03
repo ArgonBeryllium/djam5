@@ -30,12 +30,11 @@ void Player::onEvent(const ecs::Event &e)
 		case ecs::Event::frame:
 		{
 			constexpr float speed = 3;
-			static float fid = 0;
+			static float fid = 0, scd = 0;
 			static SpriteRen* sr = parentObj->getComponent<SpriteRen>();
 			static SpriteRen* hsr = heldObj->getComponent<SpriteRen>();
 			
 			cd -= e.delta;
-
 			v2f iv = common::inVec();
 			parentObj->transform.pos += iv*e.delta*speed;
 			if(iv.getLengthSquare()!=0)
@@ -43,6 +42,13 @@ void Player::onEvent(const ecs::Event &e)
 				dir=iv;
 				fid+= e.delta*15;
 				hsr->angle = std::atan2(dir.y, dir.x)-M_PI_2;
+
+				scd -= e.delta;
+				if(scd<=0)
+				{
+					Audio::playSound(Assets::sfx_steps[std::rand()%4], .3);
+					scd = .3;
+				}
 			}
 
 			if(!hasSaw)hsr->tex=Assets::tex_water_can[0];
@@ -109,13 +115,15 @@ void Player::onEvent(const ecs::Event &e)
 							water-=amt;
 							((Plant*)sel)->water(amt);
 						}
+						else
+							common::shakeCam(3, .25, Camera::getActiveCam(), 0);
 					}
 					else if(dynamic_cast<Well*>(sel))
 					{
 						heldObj->getComponent<SpriteRen>()->tex=Assets::tex_water_can[1];
 						if(water<=.91)
 						{
-							Audio::playSound(Assets::sfx_refill_water);
+							Audio::playSound(Assets::sfx_refill_water, .5);
 							water+=.1;
 						}
 					}
@@ -156,10 +164,20 @@ void Player::onEvent(const ecs::Event &e)
 							{
 								money += ((Monster*)sel)->getWorth();
 								parentObj->parentScene->destroy(sel->parentObj->getID());
+								common::shakeCam(5, .25, Camera::getActiveCam(), 0);
 							}
 						}
 						else if(hasSaw && cd <=0)
+						{
 							Audio::playSound(Assets::sfx_no_power);
+							common::shakeCam(3, .25, Camera::getActiveCam(), 0);
+						}
+						else
+							common::shakeCam(3, .25, Camera::getActiveCam(), 0);
+					}
+					else if(dynamic_cast<Radio*>(sel))
+					{
+						if(e.type==ecs::Event::keyD) Radio::changeStation();
 					}
 				}
 			}
@@ -193,9 +211,10 @@ void Player::harvest(Plant *plant)
 }
 void Player::hurt(float dmg)
 {
+	Audio::playSound(Assets::sfx_hurt);
 	instance->life -= dmg;
 	if(instance->life<=0) die("getting wounded is usually not very healthy.");
-	common::shakeCam(5,.25, Camera::getActiveCam(), 0);
+	common::shakeCam(55*dmg,.25, Camera::getActiveCam(), 0);
 }
 void Player::die(const std::string &caption)
 {

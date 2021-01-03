@@ -64,6 +64,8 @@ void Level::onStart()
 		o->addComponent(new RBody(o, 0));
 	}
 
+	o = instantiate();
+	o->addComponent(new Radio(o));
 
 	cam.scale = .3;
 }
@@ -102,7 +104,10 @@ void Level::onRenderFG(float d, float t)
 		shitrndr::FillRect(shitrndr::WindowProps::getSizeRect());
 	}
 	if(time < 0)
+	{
+		Mix_FadeOutChannel(Audio::channels[Radio::songs[Radio::cp]], 1500);
 		SceneManager::setActiveScene(2);
+	}
 	Player::instance->parentObj->getComponent<SpriteRen>()->onEvent(ecs::Event{ecs::Event::frame, d, t});
 	Player::instance->heldObj->getComponent<SpriteRen>()->onEvent(ecs::Event{ecs::Event::frame, d, t});
 }

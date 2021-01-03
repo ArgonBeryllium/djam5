@@ -1,4 +1,5 @@
 #include "monsters.h"
+#include <bj/common.h>
 
 template <typename T>
 static T lerp(const T& a, const T& b, const float& f) { return a + (b-a)*f; }
@@ -26,6 +27,8 @@ Monster* Sparrot::getMut(GameObj* obj) { return new SparrotMon(obj); }
 std::string SparrotMon::getName() { return "mutant sparrot"; }
 void SparrotMon::onStart()
 {
+	Audio::playSound(Assets::sfx_pop);
+	common::shakeCam(5, .2, Camera::getActiveCam(), 0);
 	life = .2;
 	parentObj->transform.scl *= .8;
 }
@@ -46,6 +49,7 @@ void SparrotMon::onEvent(const bj::ecs::Event &e)
 		jt -= e.delta*8;
 		if(!hit && (Player::instance->parentObj->transform.pos - parentObj->transform.pos).getLengthSquare()<.3)
 		{
+			Audio::playSound(Assets::sfx_sparrot_bite);
 			hit = 1;
 			Player::hurt(.2);
 			cd = 1;
@@ -89,6 +93,7 @@ std::string ScornMon::getName() { return "mutant scorn"; }
 void ScornMon::onStart()
 {
 	life = .4;
+	common::shakeCam(5, .2, Camera::getActiveCam(), 0);
 	parentObj->transform.scl *= 1.5;
 }
 void ScornMon::onEvent(const bj::ecs::Event &e)
@@ -99,6 +104,7 @@ void ScornMon::onEvent(const bj::ecs::Event &e)
 	shitrndr::Copy(Assets::tex_scorn, {int(cd*6)%9*540,0,540,540}, parentObj->transform.getScreenRect());
 	if(cd<=0)
 	{
+		Audio::playSound(Assets::sfx_scorn_boom);
 		cd = 1.5;
 		for(GameObj* pop : pops) parentObj->parentScene->destroy(pop->getID());
 		pops.clear();

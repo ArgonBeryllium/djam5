@@ -5,6 +5,7 @@ using namespace bj;
 
 struct SplashScene : public Scene
 {
+	bool played = 0;
 	void onStart() override
 	{
 		instantiate()->addComponent(new SpriteRen(getObj(0), "res/logo.png"));
@@ -21,12 +22,16 @@ struct SplashScene : public Scene
 			getObj(0)->transform.scl.y = std::sin((t-start)*speed);
 			getObj(0)->transform.pos.y = .5-getObj(0)->transform.scl.y/2;
 		}
-		if(t>start && !Mix_Playing(Audio::channels[Assets::sfx_splash])) Audio::playSound(Assets::sfx_splash);
+		if(t>start && !played)
+		{
+			Audio::playSound(Assets::sfx_splash);
+			played = 1;
+		}
 		if(t<M_PI) SDL_SetRenderDrawColor(shitrndr::ren, 3, 0, 4, (Uint8)((1-std::sin(t))*255));
 		UI::renderStaticText(.5, .8, "a game by ArBe", {UI::CENTRED});
 		shitrndr::FillRect(shitrndr::WindowProps::getSizeRect());
 
-		//if(t>4.5) SceneManager::setActiveScene(1);
-		SceneManager::setActiveScene(1);
+		if(t>4.5) SceneManager::setActiveScene(1);
+	//	SceneManager::setActiveScene(1);
 	}
 };
