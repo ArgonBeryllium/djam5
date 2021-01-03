@@ -14,6 +14,10 @@ Level::Level (uint8_t w_, uint8_t h_, std::vector<std::pair<uint8_t, uint8_t>> s
 	for(auto p : seeds_)
 		seeds[p.first] = p.second;
 }
+void Level::onLoad()
+{
+	shitrndr::bg_col = {150, 120, 40};
+}
 
 void Level::onStart()
 {
@@ -33,6 +37,34 @@ void Level::onStart()
 	o->transform.pos = {-3, -3};
 	o->addComponent(new Charger(o));
 
+	for(int i = 0; i < 6; i++)
+	{
+		o = instantiate();
+		o->addComponent(new SpriteRen(o, Assets::tex_rubbish[std::rand()%2]));
+		o->transform.scl = v2f{1,1}*(5+common::frand()*5);
+		o->transform.pos = {(float)i*5-13, -17};
+		o->addComponent(new RBody(o, 0));
+		o = instantiate();
+		o->addComponent(new SpriteRen(o, Assets::tex_rubbish[std::rand()%2]));
+		o->transform.scl = v2f{1,1}*(5+common::frand()*5);
+		o->transform.pos = {(float)i*5-13, 7};
+		o->addComponent(new RBody(o, 0));
+	}
+	for(int i = 0; i < 5; i++)
+	{
+		o = instantiate();
+		o->addComponent(new SpriteRen(o, Assets::tex_rubbish[std::rand()%2]));
+		o->transform.scl = v2f{1,1}*(5+common::frand()*5);
+		o->transform.pos = {-16, (float)i*5-17};
+		o->addComponent(new RBody(o, 0));
+		o = instantiate();
+		o->addComponent(new SpriteRen(o, Assets::tex_rubbish[std::rand()%2]));
+		o->transform.scl = v2f{1,1}*(5+common::frand()*5);
+		o->transform.pos = {16, (float)i*5-17};
+		o->addComponent(new RBody(o, 0));
+	}
+
+
 	cam.scale = .3;
 }
 
@@ -42,25 +74,20 @@ void Level::onRenderFG(float d, float t)
 	UI::renderStaticText(1, 0, ("level " + std::to_string(ResultScene::level)), {UI::RIGHT});
 	UI::renderText(1, .05, ("time left: " + std::to_string(time)).c_str(), {UI::RIGHT});
 	UI::renderText(1, .1, ("seed type: " + std::to_string(selSeed)).c_str(), {UI::RIGHT});
-	if(time < 10)
-	{
-		SDL_SetRenderDrawColor(shitrndr::ren, 0,0,0,255-(255*time/10));
-		shitrndr::FillRect(shitrndr::WindowProps::getSizeRect());
-	}
-	if(time < 0)
-	{
-		SceneManager::setActiveScene(2);
-	}
-	cam.pos = lerp(cam.pos, Player::instance->parentObj->transform.pos, d*3);
+
+	v2f pp = Player::instance->parentObj->transform.pos;
+	if(pp.x>-3 && pp.x<8) cam.pos.x = lerp(cam.pos.x, pp.x, d*3);
+	if(pp.y>-5 && pp.y<15) cam.pos.y = lerp(cam.pos.y, pp.y, d*3);
 	for(auto p : getObjs())
 	{
 		if(p.second->getComponent<Plant>())
 		{
 			Plant* plant = p.second->getComponent<Plant>();
+			shitrndr::Copy(plant->sr->tex, *plant->sr->sourceRect, (plant->sr->offset+p.second->transform).getScreenRect());
 			if(plant->hydration <= 0)
 				Plant::kill(plant);
 			else if(plant->ripeness>Plant::HARVEST_T/2)
-				if(common::frand()<plant->ripeness*plant->ripeness/3600)
+				if(common::frand()<plant->ripeness*plant->ripeness/1800)
 				{
 					GameObj* m = p.second->parentScene->instantiate();
 					m->transform.pos = p.second->transform.pos;
@@ -69,6 +96,15 @@ void Level::onRenderFG(float d, float t)
 				}
 		}
 	}
+	if(time < 10)
+	{
+		SDL_SetRenderDrawColor(shitrndr::ren, 0,0,0,255-(255*time/10));
+		shitrndr::FillRect(shitrndr::WindowProps::getSizeRect());
+	}
+	if(time < 0)
+		SceneManager::setActiveScene(2);
+	Player::instance->parentObj->getComponent<SpriteRen>()->onEvent(ecs::Event{ecs::Event::frame, d, t});
+	Player::instance->heldObj->getComponent<SpriteRen>()->onEvent(ecs::Event{ecs::Event::frame, d, t});
 }
 
 uint8_t ResultScene::level = 0;

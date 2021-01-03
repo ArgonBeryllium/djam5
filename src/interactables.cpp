@@ -4,7 +4,7 @@ using namespace bj;
 
 void Interactable::onStart()
 {
-	parentObj->addComponent(new BasicRen(parentObj, {0,155,0,255}));
+//	parentObj->addComponent(new BasicRen(parentObj, {0,155,0,255}));
 }
 void Interactable::onEvent(const bj::ecs::Event& e) {}
 std::string Interactable::getAction() { return "action"; }

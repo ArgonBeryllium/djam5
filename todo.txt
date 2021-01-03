@@ -1,6 +1,5 @@
 arbe
 ________
-
 - the different levels
 	- 0; tutorial
 	- 1; intro
@@ -10,21 +9,22 @@ ________
 		(phases tied to the remaining roots)
 
 - main menu
+- implement all sfx
+- add screenshake
+- radio
+
+- fix audio bugs (e.g. charging & finish sounds not playing)
 
 art:
-	mc (idle, walk)
-	chainsaw
 	radio
-	ground
 	bg
-	water meter
-	power meter
+	concludion screen
+	creadits
 	boss
 		main body (breaking through, normal, shooting, dead)
 		roots
 
 CUTOFF LINE ---
-screenshake
 point floats
 particles
 title art
