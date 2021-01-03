@@ -25,3 +25,9 @@ struct ResultScene : public bj::Scene
 	void onLoad() override;
 	void onRenderFG(float d, float t) override;
 };
+
+struct DeathScene : public bj::Scene
+{
+	static std::string caption;
+	void onRenderFG(float d, float t) override;
+};

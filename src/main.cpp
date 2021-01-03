@@ -9,8 +9,8 @@ using namespace bj;
 int BJ_MULP_MAIN()
 {
 	initParams ip;
-	ip.nscenes = 3;
-	ip.scenes = new Scene*[3]{new SplashScene(), new Level(6, 3, {}, 120, 10, 0), new ResultScene()};
+	ip.nscenes = 4;
+	ip.scenes = new Scene*[4]{new SplashScene(), new Level(6, 3, {}, 20, 10, 0), new ResultScene(), new DeathScene()};
 
 	Game::init(ip);
 	shitrndr::WindowProps::setPixScale(3);

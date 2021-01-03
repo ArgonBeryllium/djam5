@@ -6,12 +6,6 @@ static T lerp(const T& a, const T& b, const float& f) { return a + (b-a)*f; }
 
 using namespace bj;
 
-Mix_Chunk* Assets::sfx_money;
-void Assets::init()
-{
-	sfx_money = fileIO::loadSound("res/sfx/money.wav");
-}
-
 Level* Level::instance;
 Level::Level (uint8_t w_, uint8_t h_, std::vector<std::pair<uint8_t, uint8_t>> seeds_, float time_, int minSum_, bool lc) : w(w_), h(h_), time(time_), minSum(minSum_), lastChance(lc)
 {
@@ -32,8 +26,11 @@ void Level::onStart()
 			obj->addComponent(new Ground(obj));
 		}
 	o = instantiate();
-	o->transform.pos = {-3, -3};
+	o->transform.pos = {-3, 3};
 	o->addComponent(new Well(o));
+	o = instantiate();
+	o->transform.pos = {-3, -3};
+	o->addComponent(new Charger(o));
 
 	cam.scale = .3;
 }
@@ -80,7 +77,7 @@ void ResultScene::onRenderFG(float d, float t)
 		if(!passed)
 		{
 			if(!Level::instance->lastChance) UI::renderStaticText(.5, .6, "Lookin' thin.", {UI::CENTRED});
-			else UI::renderStaticText(.5, .6, "You failed to survive.", {UI::CENTRED});
+			else UI::renderStaticText(.5, .6, "That's... not enough.", {UI::CENTRED});
 		}
 		else UI::renderStaticText(.5, .6, "You survived.", {UI::CENTRED});
 
@@ -89,14 +86,27 @@ void ResultScene::onRenderFG(float d, float t)
 			UI::renderStaticText(.5, .7, "[SPACE]", {UI::CENTRED});
 			if(Input::getKey(SDLK_SPACE))
 			{
+				if(!passed && Level::instance->lastChance)
+				{
+					Player::die("tip: sustinance is necessary for survival.");
+					return;
+				}
 				Level::instance->clearObjs();
 				delete Level::instance;
 				//TODO actual levels
-				Level::instance = new Level(10, 10, {}, 15, 10);
+				if(passed) level++;
+				Level::instance = new Level(10, 10, {}, 15, 10, !passed);
 				Level::instance->onStart();
 				SceneManager::scenes[1] = Level::instance;
 				SceneManager::setActiveScene(1);
 			}
 		}
 	}
+}
+
+std::string DeathScene::caption;
+void DeathScene::onRenderFG(float d, float t)
+{
+	UI::renderStaticText(.5, .4, "you failed to survive", {UI::CENTRED, 1, {255,0,0,255}});
+	UI::renderStaticText(.5, .7, caption, {UI::CENTRED});
 }

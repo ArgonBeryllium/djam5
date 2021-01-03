@@ -1,4 +1,5 @@
 #include "definitions.h"
+#include "level.h"
 #include <bj/common.h>
 using namespace bj;
 
@@ -8,7 +9,6 @@ void Player::onStart()
 	if(this==instance) return;
 	parentObj->addComponent(new BasicRen(parentObj));
 	instance = this;
-	std::cout << "nyuu p\n";
 }
 void Player::onEvent(const ecs::Event &e)
 {
@@ -18,6 +18,8 @@ void Player::onEvent(const ecs::Event &e)
 		{
 			constexpr float speed = 3;
 			
+			if(life<=0) die("getting wounded is usually not very healthy.");
+
 			v2f iv = common::inVec();
 			parentObj->transform.pos += iv*e.delta*speed;
 			if(iv.getLengthSquare()!=0) dir=iv;
@@ -46,7 +48,7 @@ void Player::onEvent(const ecs::Event &e)
 				{
 					if(dynamic_cast<Plant*>(sel))
 					{
-						if(!((Plant*)sel)->getAction().compare("harvest"))
+						if(!((Plant*)sel)->getAction().compare("harvest") && hasSaw && power >= ((Plant*)sel)->getPower())
 						{
 							harvest((Plant*)sel);
 							return;
@@ -63,6 +65,10 @@ void Player::onEvent(const ecs::Event &e)
 					{
 						if(water<=.9)
 							water+=.1;
+					}
+					else if(dynamic_cast<Charger*>(sel))
+					{
+						hasSaw = !hasSaw;
 					}
 					else if(dynamic_cast<Ground*>(sel))
 					{
@@ -89,7 +95,12 @@ Interactable* Player::check()
 void Player::harvest(Plant *plant)
 {
 	instance->money += plant->getWorth();
-	instance->power -= plant->getWorth()/10.;
+	instance->power -= plant->getPower();
 	plant->parentObj->addComponent(new Ground(plant->parentObj));
 	plant->parentObj->removeComponent(plant);
+}
+void Player::die(const std::string &caption)
+{
+	DeathScene::caption = caption;
+	SceneManager::setActiveScene(3);
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <bj/berryJam.h>
+#include "definitions.h"
 using namespace bj;
 
 struct SplashScene : public Scene
@@ -20,6 +21,7 @@ struct SplashScene : public Scene
 			getObj(0)->transform.scl.y = std::sin((t-start)*speed);
 			getObj(0)->transform.pos.y = .5-getObj(0)->transform.scl.y/2;
 		}
+		if(t>start && !Mix_Playing(Audio::channels[Assets::sfx_splash])) Audio::playSound(Assets::sfx_splash);
 		if(t<M_PI) SDL_SetRenderDrawColor(shitrndr::ren, 3, 0, 4, (Uint8)((1-std::sin(t))*255));
 		UI::renderStaticText(.5, .8, "a game by ArBe", {UI::CENTRED});
 		shitrndr::FillRect(shitrndr::WindowProps::getSizeRect());
