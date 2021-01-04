@@ -28,10 +28,10 @@ struct SplashScene : public Scene
 			played = 1;
 		}
 		if(t<M_PI) SDL_SetRenderDrawColor(shitrndr::ren, 3, 0, 4, (Uint8)((1-std::sin(t))*255));
-		UI::renderStaticText(.5, .8, "a game by ArBe", {UI::CENTRED});
+		UI::renderStaticText(.5, .8, "a \"game\" by ArBe", {UI::CENTRED});
 		shitrndr::FillRect(shitrndr::WindowProps::getSizeRect());
 
-	//	if(t>4.5) SceneManager::setActiveScene(1);
-		SceneManager::setActiveScene(1);
+		if(t>4.5) SceneManager::setActiveScene(1);
+		//SceneManager::setActiveScene(1);
 	}
 };

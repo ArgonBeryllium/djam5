@@ -1,6 +1,7 @@
 #include "level.h"
 #include "definitions.h"
 #include <bj/common.h>
+#include "monsters.h"
 
 template <typename T>
 static T lerp(const T& a, const T& b, const float& f) { return a + (b-a)*f; }
@@ -16,7 +17,7 @@ Level::Level (uint8_t w_, uint8_t h_, std::vector<std::pair<uint8_t, uint8_t>> s
 }
 void Level::onLoad()
 {
-	shitrndr::bg_col = {150, 120, 40};
+	shitrndr::bg_col = {0xdf, 0xbb, 0x59};
 }
 
 void Level::onStart()
@@ -74,7 +75,7 @@ void Level::onRenderFG(float d, float t)
 {
 	time -= d;
 	UI::renderStaticText(1, 0, ("level " + std::to_string(ResultScene::level)), {UI::RIGHT});
-	UI::renderText(.5, .1, (std::to_string(int(time/60)) + ":" + std::to_string(int(time)%60)).c_str(), {UI::CENTRED, 1});
+	UI::renderText(.5, .1, (std::to_string(int(time/60)) + "m " + std::to_string(int(time)%60)+"s").c_str(), {UI::CENTRED, 1});
 	UI::renderStaticText(1, .2, "SEEDS ([TAB])", {UI::RIGHT});
 	UI::renderText(1, .25, (std::string(selSeed==0?">>":"- ") + "sparrot seeds (" + std::to_string(seeds[0]) + ")").c_str(), {UI::RIGHT});
 	UI::renderText(1, .3, (std::string(selSeed==1?">>":"- ") + "scorn seeds (" + std::to_string(seeds[1]) + ")").c_str(), {UI::RIGHT});
@@ -100,6 +101,12 @@ void Level::onRenderFG(float d, float t)
 				}
 		}
 	}
+	for(auto p : getObjs())
+	{
+		if(p.second->getComponent<ScornMon>())
+			for(GameObj* pop : p.second->getComponent<ScornMon>()->pops)
+				pop->getComponent<SpriteRen>()->onEvent({ecs::Event::frame, d, t});
+	}
 	if(time < 10)
 	{
 		SDL_SetRenderDrawColor(shitrndr::ren, 0,0,0,255-(255*time/10));
@@ -118,7 +125,11 @@ uint8_t ResultScene::level = 0;
 void ResultScene::onStart()
 {
 }
-void ResultScene::onLoad() { loadS = 0; }
+void ResultScene::onLoad()
+{
+	loadS = 0;
+	shitrndr::bg_col = {5, 0, 7};
+}
 void ResultScene::onRenderFG(float d, float t)
 {
 	if(!loadS) loadS = t;
@@ -131,24 +142,28 @@ void ResultScene::onRenderFG(float d, float t)
 	if(ts > 2.3)
 	{
 		UI::renderText(.5, .4, +std::to_string(Player::instance->money).c_str(), {UI::CENTRED, 1});
+		/*
 		if(!passed)
 		{
 			if(!Level::instance->lastChance) UI::renderStaticText(.5, .6, "Lookin' thin.", {UI::CENTRED});
 			else UI::renderStaticText(.5, .6, "That's... not enough.", {UI::CENTRED});
 		}
 		else UI::renderStaticText(.5, .6, "You survived.", {UI::CENTRED});
+		*/
 
 		if(ts>3)
 		{
 			UI::renderStaticText(.5, .7, "[SPACE]", {UI::CENTRED});
 			if(Input::getKey(SDLK_SPACE))
 			{
+				/*
 				if(!passed && Level::instance->lastChance)
 				{
 					Player::die("tip: sustinance is necessary for survival.");
 					return;
 				}
 				Level::instance->clearObjs();
+				delete Level::instance;
 				if(passed) level++;
 				switch(level)
 				{
@@ -158,14 +173,46 @@ void ResultScene::onRenderFG(float d, float t)
 				Level::instance->onStart();
 				SceneManager::scenes[1] = Level::instance;
 				SceneManager::setActiveScene(1);
+				*/
+				SceneManager::setActiveScene(4);
 			}
 		}
 	}
 }
 
 std::string DeathScene::caption;
+void DeathScene::onLoad()
+{
+	shitrndr::bg_col = {5, 0, 7};
+}
 void DeathScene::onRenderFG(float d, float t)
 {
 	UI::renderStaticText(.5, .4, "you failed to survive", {UI::CENTRED, 1, {255,0,0,255}});
 	UI::renderStaticText(.5, .7, caption, {UI::CENTRED});
+	static float st = t;
+	if(t - st > 2)
+	{
+		UI::renderStaticText(.5, .6, "press [SPACE] to exit", {UI::CENTRED});
+		if(Input::getKey(SDLK_SPACE))
+			exit(0);
+	}
+}
+
+void CreditScene::onRenderFG(float d, float t)
+{
+	static float st = t;
+	float o = (t-st) * .05-.5;
+	UI::renderStaticText(.5,  -o, "SOW SAW", {UI::CENTRED, 1});
+	UI::renderStaticText(.5, .2 - o, "A disappointment of a game", {UI::CENTRED});
+	UI::renderStaticText(.5, .25 - o, "Made for DJam 5", {UI::CENTRED});
+	UI::renderStaticText(.5, .3 - o, "Graphics, programming and segfaults by ArBe", {UI::CENTRED});
+	UI::renderStaticText(.5, .35 - o, "Music & SFX by Jakub Pietrzak", {UI::CENTRED});
+	UI::renderStaticText(.5, .6 - o, "This game was originally intended to have 5 levels,", {UI::CENTRED});
+	UI::renderStaticText(.5, .65 - o, "another enemy type, and a boss fight. We decided to", {UI::CENTRED});
+	UI::renderStaticText(.5, .7 - o, "cut the boss fight, and the game decided to", {UI::CENTRED});
+	UI::renderStaticText(.5, .75 - o, "shit itself at the last minute. So here you go,", {UI::CENTRED});
+	UI::renderStaticText(.5, .8 - o, "a prime example of wasted potential.", {UI::CENTRED});
+	UI::renderStaticText(.5, 1.1 - o, "Use protection, kids.", {UI::CENTRED});
+	UI::renderStaticText(.5, 1.15 - o, "Or you'll end up with dangling pointers.", {UI::CENTRED});
+	if(o>1) exit(0);
 }

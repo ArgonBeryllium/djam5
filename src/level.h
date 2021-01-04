@@ -30,5 +30,12 @@ struct ResultScene : public bj::Scene
 struct DeathScene : public bj::Scene
 {
 	static std::string caption;
+	void onLoad() override;
+	void onRenderFG(float d, float t) override;
+};
+
+
+struct CreditScene : public bj::Scene
+{
 	void onRenderFG(float d, float t) override;
 };

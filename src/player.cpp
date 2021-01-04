@@ -23,7 +23,6 @@ void Player::onEvent(const ecs::Event &e)
 {
 	switch(e.type)
 	{
-		std::cout << parentObj->getComponent<Player>() << '\n';
 		case ecs::Event::frame:
 		{
 			constexpr float speed = 3;
@@ -38,7 +37,7 @@ void Player::onEvent(const ecs::Event &e)
 			{
 				dir=iv;
 				fid+= e.delta*15;
-				hsr->angle = std::atan2(dir.y, dir.x)-M_PI_2;
+				hsr->angle = std::atan2(dir.y, dir.x)-M_PI/2;
 
 				scd -= e.delta;
 				if(scd<=0)
@@ -51,8 +50,6 @@ void Player::onEvent(const ecs::Event &e)
 			if(!hasSaw)hsr->tex=Assets::tex_water_can[0];
 			if((hsr->tex==Assets::tex_saw && hasSaw) || hsr->tex!=Assets::tex_saw)
 				heldObj->transform.pos = lerp(heldObj->transform.pos, parentObj->transform.pos+dir*.6, e.delta*8);
-			else
-				heldObj->transform.pos = charger->transform.pos;
 			if(Input::getKey(SDLK_SPACE))
 			{
 				if(hasSaw && hsr->tex==Assets::tex_saw) heldObj->transform.pos += (v2f{common::frand(), common::frand()}-v2f{.5,.5})*6*e.delta;
@@ -159,6 +156,11 @@ void Player::onEvent(const ecs::Event &e)
 							((Monster*)sel)->takeDamage(amt);
 							if(((Monster*)sel)->life<=0)
 							{
+								if(common::frand()<.5)
+								{
+									if(dynamic_cast<SparrotMon*>(sel)) Level::instance->seeds[0]++;
+									else Level::instance->seeds[1]++;
+								}
 								money += ((Monster*)sel)->getWorth();
 								parentObj->parentScene->destroy(sel->parentObj->getID());
 								common::shakeCam(5, .25, Camera::getActiveCam(), 0);
@@ -200,11 +202,16 @@ Interactable* Player::check()
 }
 void Player::harvest(Plant *plant)
 {
+	Audio::playSound(Assets::sfx_harvest);
+	if(common::frand()<.5)
+	{
+		if(dynamic_cast<Sparrot*>(plant)) Level::instance->seeds[0]++;
+		else Level::instance->seeds[1]++;
+	}
 	instance->money += plant->getWorth();
 	instance->power -= plant->getPower();
 	plant->parentObj->addComponent(new Ground(plant->parentObj));
 	plant->parentObj->removeComponent(plant);
-	Audio::playSound(Assets::sfx_harvest);
 }
 void Player::hurt(float dmg)
 {

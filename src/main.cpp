@@ -10,8 +10,8 @@ using namespace bj;
 int BJ_MULP_MAIN()
 {
 	initParams ip;
-	ip.nscenes = 4;
-	ip.scenes = new Scene*[4]{new SplashScene(), new Level(3, 2, {{0, 3}, {1, 3}}, 0, 0, 0), new ResultScene(), new DeathScene()};
+	ip.nscenes = 5;
+	ip.scenes = new Scene*[5]{new SplashScene(), new Level(10, 5, {{0, 5}, {1, 5}}, 180, 0, 0), new ResultScene(), new DeathScene(), new CreditScene()};
 
 	Game::init(ip);
 	Mix_AllocateChannels(24);
