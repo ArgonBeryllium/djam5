@@ -20,7 +20,7 @@ void Sparrot::onEvent(const ecs::Event& e)
 {
 	Plant::onEvent(e);
 	if(e.type!=ecs::Event::frame) return;
-	parentObj->getComponent<SpriteRen>()->offset.scl = v2f{1,1}*(.6+.4*hydration);
+	sr->offset.scl = v2f{1,1}*(.6+.4*hydration);
 }
 Monster* Sparrot::getMut(GameObj* obj) { return new SparrotMon(obj); }
 

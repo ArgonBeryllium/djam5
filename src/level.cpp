@@ -74,8 +74,10 @@ void Level::onRenderFG(float d, float t)
 {
 	time -= d;
 	UI::renderStaticText(1, 0, ("level " + std::to_string(ResultScene::level)), {UI::RIGHT});
-	UI::renderText(1, .05, ("time left: " + std::to_string(time)).c_str(), {UI::RIGHT});
-	UI::renderText(1, .1, ("seed type: " + std::to_string(selSeed)).c_str(), {UI::RIGHT});
+	UI::renderText(.5, .1, (std::to_string(int(time/60)) + ":" + std::to_string(int(time)%60)).c_str(), {UI::CENTRED, 1});
+	UI::renderStaticText(1, .2, "SEEDS ([TAB])", {UI::RIGHT});
+	UI::renderText(1, .25, (std::string(selSeed==0?">>":"- ") + "sparrot seeds (" + std::to_string(seeds[0]) + ")").c_str(), {UI::RIGHT});
+	UI::renderText(1, .3, (std::string(selSeed==1?">>":"- ") + "scorn seeds (" + std::to_string(seeds[1]) + ")").c_str(), {UI::RIGHT});
 
 	v2f pp = Player::instance->parentObj->transform.pos;
 	if(pp.x>-3 && pp.x<8) cam.pos.x = lerp(cam.pos.x, pp.x, d*3);
@@ -147,10 +149,12 @@ void ResultScene::onRenderFG(float d, float t)
 					return;
 				}
 				Level::instance->clearObjs();
-				delete Level::instance;
-				//TODO actual levels
 				if(passed) level++;
-				Level::instance = new Level(10, 10, {}, 15, 10, !passed);
+				switch(level)
+				{
+					case 0:	Level::instance = new Level(3, 2, {{0,3},{1,3}}, 15, 10, !passed); break;
+					case 1:	Level::instance = new Level(4, 4, {{0,6},{1,4}}, 15, 10, !passed); break;
+				}
 				Level::instance->onStart();
 				SceneManager::scenes[1] = Level::instance;
 				SceneManager::setActiveScene(1);

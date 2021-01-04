@@ -10,14 +10,10 @@ static T lerp(const T& a, const T& b, const float& f) { return a + (b-a)*f; }
 
 void Player::onStart()
 {
-	if(this==instance) return;
 	parentObj->addComponent(new SpriteRen(parentObj, Assets::tex_mc_down));
 	parentObj->getComponent<SpriteRen>()->sourceRect = new SDL_Rect{0,0,540,540};
 	parentObj->addComponent(new RBody(parentObj));
-	parentObj->getComponent<RBody>()->onCollision = [](RBody* self, RBody* other, const intersection* in)
-	{
-		self->vel *= 0;
-	};
+	parentObj->getComponent<RBody>()->onCollision = [](RBody* self, RBody* other, const intersection* in) { self->vel *= 0; };
 	heldObj = parentObj->parentScene->instantiate();
 	heldObj->addComponent(new SpriteRen(heldObj, Assets::tex_saw));
 	heldObj->getComponent<SpriteRen>()->sourceRect = new SDL_Rect{0,0,540,540};
@@ -27,6 +23,7 @@ void Player::onEvent(const ecs::Event &e)
 {
 	switch(e.type)
 	{
+		std::cout << parentObj->getComponent<Player>() << '\n';
 		case ecs::Event::frame:
 		{
 			constexpr float speed = 3;
@@ -67,6 +64,7 @@ void Player::onEvent(const ecs::Event &e)
 			if(iv.y>0) sr->tex = Assets::tex_mc_down;
 			else if(iv.y<0) sr->tex = Assets::tex_mc_up;
 
+			if(sr->sourceRect)
 			sr->sourceRect->x = int(fid)%9*540;
 
 			vec2<uint32_t> sp = Camera::getActiveCam()->getScreenPoint(parentObj->transform.pos+v2f{parentObj->transform.scl.x/2, -parentObj->transform.scl.y});
@@ -129,7 +127,6 @@ void Player::onEvent(const ecs::Event &e)
 					}
 					else if(dynamic_cast<Charger*>(sel))
 					{
-						heldObj->getComponent<SpriteRen>()->tex=Assets::tex_saw;
 						Audio::playSound(Assets::sfx_charge);
 						hasSaw = !hasSaw;
 						charger = sel->parentObj;

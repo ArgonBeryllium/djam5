@@ -71,6 +71,7 @@ void Plant::water(const float& amt)
 void Plant::kill(Plant* plant)
 {
 	GameObj* o = plant->parentObj;
+	o->removeComponent(plant->sr);
 	o->removeComponent(plant);
 	o->addComponent(new Ground(o));
 }

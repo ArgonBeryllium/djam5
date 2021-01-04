@@ -20,6 +20,7 @@ struct Player : public bj::ecs::Com
 	bool hasSaw = 1;
 
 	Player(bj::GameObj* po) : bj::ecs::Com(bj::BehSys::getInstance(), po) { onStart(); }
+	~Player() { std::cout << "AAAAAAAAA\n"; }
 
 	Interactable* check();
 	static void harvest(Plant* plant);
@@ -34,7 +35,7 @@ struct Interactable : public bj::ecs::Com
 	virtual std::string getAction();
 	virtual std::string getName();
 
-	Interactable(bj::GameObj* po) : bj::ecs::Com(bj::BehSys::getInstance(), po) {onStart();}
+	Interactable(bj::GameObj* po) : bj::ecs::Com(bj::BehSys::getInstance(), po) {onStart(); }
 
 	void onStart() override;
 	void onEvent(const bj::ecs::Event& e) override;
@@ -50,7 +51,6 @@ struct Radio : public Interactable
 		parentObj->addComponent(new bj::SpriteRen(parentObj, Assets::tex_radio));
 		if(songs.empty()) songs = {bj::fileIO::loadSound("res/music/radio song 1.wav"), bj::fileIO::loadSound("res/music/radio song 2 tha bloongi boo.wav"), bj::fileIO::loadSound("res/music/radio song 3 jazzuga's revange.wav")};
 		if(!cp) cp = -1;
-		//bj::Audio::playSound(songs[cp]);
 	}
 	static void changeStation();
 	void onEvent(const bj::ecs::Event& e) override;
@@ -61,7 +61,7 @@ struct Radio : public Interactable
 struct Monster : public Interactable
 {
 	float life = 1;
-	Monster(bj::GameObj* po) : Interactable(po) { onStart(); }
+	Monster(bj::GameObj* po) : Interactable(po) { onStart(); }	
 	virtual int getWorth() = 0;
 	virtual void takeDamage(float amt);
 	std::string getAction() override;
@@ -111,7 +111,11 @@ struct Charger : public Interactable
 };
 struct Ground : public Interactable
 {
-	Ground(bj::GameObj* po) : Interactable(po) { parentObj->addComponent(new bj::SpriteRen(parentObj, Assets::tex_ground)); parentObj->transform.scl = bj::v2f{1,1}*1.3; }
+	Ground(bj::GameObj* po) : Interactable(po)
+	{
+		parentObj->addComponent(new bj::SpriteRen(parentObj, Assets::tex_ground));
+		parentObj->transform.scl = bj::v2f{1,1}*1.3;
+	}
 	std::string getAction() override;
 	std::string getName() override;
 };

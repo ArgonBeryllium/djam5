@@ -31,7 +31,7 @@ struct SplashScene : public Scene
 		UI::renderStaticText(.5, .8, "a game by ArBe", {UI::CENTRED});
 		shitrndr::FillRect(shitrndr::WindowProps::getSizeRect());
 
-		if(t>4.5) SceneManager::setActiveScene(1);
-	//	SceneManager::setActiveScene(1);
+	//	if(t>4.5) SceneManager::setActiveScene(1);
+		SceneManager::setActiveScene(1);
 	}
 };
