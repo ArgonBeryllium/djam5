@@ -18,10 +18,8 @@ Level::Level (uint8_t w_, uint8_t h_, std::vector<std::pair<uint8_t, uint8_t>> s
 void Level::onLoad()
 {
 	shitrndr::bg_col = {0xdf, 0xbb, 0x59};
-}
 
-void Level::onStart()
-{
+	clearObjs();
 	GameObj* o = instantiate();
 	o->addComponent(new Player(o));
 	for(float y = 0; y != h; y++)
@@ -67,8 +65,11 @@ void Level::onStart()
 
 	o = instantiate();
 	o->addComponent(new Radio(o));
-
 	cam.scale = .3;
+}
+
+void Level::onStart()
+{
 }
 
 void Level::onRenderFG(float d, float t)
@@ -87,6 +88,9 @@ void Level::onRenderFG(float d, float t)
 	{
 		if(p.second->getComponent<Plant>())
 		{
+			if(p.second->getComponent<ScornMon>())
+				for(GameObj* pop : p.second->getComponent<ScornMon>()->pops)
+					pop->getComponent<SpriteRen>()->onEvent({ecs::Event::frame, d, t});
 			Plant* plant = p.second->getComponent<Plant>();
 			shitrndr::Copy(plant->sr->tex, *plant->sr->sourceRect, (plant->sr->offset+p.second->transform).getScreenRect());
 			if(plant->hydration <= 0)
@@ -100,12 +104,6 @@ void Level::onRenderFG(float d, float t)
 					Plant::kill(plant);
 				}
 		}
-	}
-	for(auto p : getObjs())
-	{
-		if(p.second->getComponent<ScornMon>())
-			for(GameObj* pop : p.second->getComponent<ScornMon>()->pops)
-				pop->getComponent<SpriteRen>()->onEvent({ecs::Event::frame, d, t});
 	}
 	if(time < 10)
 	{
@@ -142,21 +140,18 @@ void ResultScene::onRenderFG(float d, float t)
 	if(ts > 2.3)
 	{
 		UI::renderText(.5, .4, +std::to_string(Player::instance->money).c_str(), {UI::CENTRED, 1});
-		/*
 		if(!passed)
 		{
 			if(!Level::instance->lastChance) UI::renderStaticText(.5, .6, "Lookin' thin.", {UI::CENTRED});
 			else UI::renderStaticText(.5, .6, "That's... not enough.", {UI::CENTRED});
 		}
 		else UI::renderStaticText(.5, .6, "You survived.", {UI::CENTRED});
-		*/
 
 		if(ts>3)
 		{
 			UI::renderStaticText(.5, .7, "[SPACE]", {UI::CENTRED});
 			if(Input::getKey(SDLK_SPACE))
 			{
-				/*
 				if(!passed && Level::instance->lastChance)
 				{
 					Player::die("tip: sustinance is necessary for survival.");
@@ -173,8 +168,6 @@ void ResultScene::onRenderFG(float d, float t)
 				Level::instance->onStart();
 				SceneManager::scenes[1] = Level::instance;
 				SceneManager::setActiveScene(1);
-				*/
-				SceneManager::setActiveScene(4);
 			}
 		}
 	}
@@ -187,6 +180,7 @@ void DeathScene::onLoad()
 }
 void DeathScene::onRenderFG(float d, float t)
 {
+	shitrndr::bg_col = {Uint8(std::abs(std::sin(t))*25), 0, 7};
 	UI::renderStaticText(.5, .4, "you failed to survive", {UI::CENTRED, 1, {255,0,0,255}});
 	UI::renderStaticText(.5, .7, caption, {UI::CENTRED});
 	static float st = t;
@@ -207,12 +201,6 @@ void CreditScene::onRenderFG(float d, float t)
 	UI::renderStaticText(.5, .25 - o, "Made for DJam 5", {UI::CENTRED});
 	UI::renderStaticText(.5, .3 - o, "Graphics, programming and segfaults by ArBe", {UI::CENTRED});
 	UI::renderStaticText(.5, .35 - o, "Music & SFX by Jakub Pietrzak", {UI::CENTRED});
-	UI::renderStaticText(.5, .6 - o, "This game was originally intended to have 5 levels,", {UI::CENTRED});
-	UI::renderStaticText(.5, .65 - o, "another enemy type, and a boss fight. We decided to", {UI::CENTRED});
-	UI::renderStaticText(.5, .7 - o, "cut the boss fight, and the game decided to", {UI::CENTRED});
-	UI::renderStaticText(.5, .75 - o, "shit itself at the last minute. So here you go,", {UI::CENTRED});
-	UI::renderStaticText(.5, .8 - o, "a prime example of wasted potential.", {UI::CENTRED});
-	UI::renderStaticText(.5, 1.1 - o, "Use protection, kids.", {UI::CENTRED});
-	UI::renderStaticText(.5, 1.15 - o, "Or you'll end up with dangling pointers.", {UI::CENTRED});
+	UI::renderStaticText(.5, .8 - o, "big pog chug cum", {UI::CENTRED});
 	if(o>1) exit(0);
 }

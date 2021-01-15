@@ -18,6 +18,9 @@ void Player::onStart()
 	heldObj->addComponent(new SpriteRen(heldObj, Assets::tex_saw));
 	heldObj->getComponent<SpriteRen>()->sourceRect = new SDL_Rect{0,0,540,540};
 	instance = this;
+
+	sr = parentObj->getComponent<SpriteRen>();
+	hsr = heldObj->getComponent<SpriteRen>();
 }
 void Player::onEvent(const ecs::Event &e)
 {
@@ -27,8 +30,6 @@ void Player::onEvent(const ecs::Event &e)
 		{
 			constexpr float speed = 3;
 			static float fid = 0, scd = 0;
-			static SpriteRen* sr = parentObj->getComponent<SpriteRen>();
-			static SpriteRen* hsr = heldObj->getComponent<SpriteRen>();
 			
 			cd -= e.delta;
 			v2f iv = common::inVec();

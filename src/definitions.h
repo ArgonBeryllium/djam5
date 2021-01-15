@@ -19,6 +19,9 @@ struct Player : public bj::ecs::Com
 	int money = 0;
 	bool hasSaw = 1;
 
+	bj::SpriteRen* sr;
+	bj::SpriteRen* hsr;
+	
 	Player(bj::GameObj* po) : bj::ecs::Com(bj::BehSys::getInstance(), po) { onStart(); }
 	~Player() { std::cout << "AAAAAAAAA\n"; }
 
