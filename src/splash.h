@@ -12,6 +12,14 @@ struct SplashScene : public Scene
 		getObj(0)->transform.scl.y = 0;
 		cam.pos = {.5,.5};
 		cam.scale = 2;
+		getObj(0)->addComponent(new Behaviour(getObj(0), [](Behaviour* self, const ecs::Event& e)
+					{
+						if(e.type==ecs::Event::keyD)
+						{
+							SceneManager::setActiveScene(1);
+							Mix_FadeOutChannel(0, 200);
+						}
+					}));
 	}
 	void onLoad() override { shitrndr::bg_col = {3,0,4,255}; }
 	void onRenderFG(float d, float t) override
@@ -32,6 +40,5 @@ struct SplashScene : public Scene
 		shitrndr::FillRect(shitrndr::WindowProps::getSizeRect());
 
 		if(t>4.5) SceneManager::setActiveScene(1);
-		//SceneManager::setActiveScene(1);
 	}
 };
